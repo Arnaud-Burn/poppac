@@ -6,6 +6,16 @@ $ mkdir /usr/share/poppac
 Give right to your monitoring user on it (shinken OR nagios OR icinga...)
 $ chown shinken /usr/share/poppac
 
+++EASY WAY :
+Just get the "perl-dep.tar" archive in the main repository
+than unpack all files and folders inside you main perl folder
+
+Ubuntu/debian:
+$ cp -rf perl-dep/* /usr/share/perl/5.18.2/
+
+>> You can skip to # INSTALL # if you choose EASY WAY
+
+--MANUAL WAY:
 You'll need those perl module
 $ perl -MCPAN -e 'install Encoding::BER'
 $ perl -MCPAN -e 'install Convert::BER'
@@ -22,8 +32,14 @@ $ cp BER/* ../
 
 You should have BER.pm and SNMP.pm inside /usr/local/share/perl/"version"/
 
+You also need SNMP_Session module
+$ wget https://snmp-session.googlecode.com/files/SNMP_Session-1.13.tar.gz
+$ tar -xvf …
+$ perl Makefile.pm
+$ make & make install
 
-# Install
+
+# INSTALL #
 
 At the moment, it's manual: 
 1. Downlaod the script .pl 
