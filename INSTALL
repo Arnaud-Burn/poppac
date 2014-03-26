@@ -1,0 +1,34 @@
+# Pre-Requisite
+
+Create the folder to use with it :
+$ mkdir /usr/share/poppac
+
+Give right to your monitoring user on it (shinken OR nagios OR icinga...)
+$ chown shinken /usr/share/poppac
+
+You'll need those perl module
+$ perl -MCPAN -e 'install Encoding::BER'
+$ perl -MCPAN -e 'install Convert::BER'
+
+If you are running CPAN for the first time, answer to question by pressing ENTER for default values.
+
+If it ask again for the BER module after a successfull install,
+got this error under Ubuntu Trusty
+$ cd /usr/local/share/perl/"version"/Convert
+$ cp * ../
+$ cd ../Encoding
+$ cp -f BER.pm ../
+$ cp BER/* ../
+
+You should have BER.pm and SNMP.pm inside /usr/local/share/perl/"version"/
+
+
+# Install
+
+At the moment, it's manual: 
+1. Downlaod the script .pl 
+2. place it inside your "libexec" folder 
+3. gives your nagios/shinken user rights on it 
+4. Create a new template and service definition for your monitoring system 
+5. into the "commands.cfg", call the script for each type of paper you want to check, just change the OID and add $HOSTADDRESS$ as 2nd argument.
+6. link some hosts to this template
