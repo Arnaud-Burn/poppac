@@ -1,10 +1,13 @@
 #TODO
-* Add automatic data restore in case of crash
-* Add new error messages
 * Add historical data storage
 * Add graphical integration or with PNP4nagios
+* English message version
 
-#Version 0.5 - Stable Version
+#Version 0.6
+* Add own directory to store files
+* Fix data restore in case of machine crash
+
+#Version 0.5
 * Add data save into files
 * Add possibility to manually edit files
 * Add automatic month change detection
