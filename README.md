@@ -21,7 +21,6 @@ It will no impact on future updates.
 * Shows the Total printed pages for the actual month plus the name of the month.
 * Shows the total printed pages for the last month.
 * Manage the month change automatically, based on system time.
-
 * Detect and create files automatically at first launch.
 * Detect and warn the user for connection problem to host.
 * Detect and warn the user for corrupted or missing files.
@@ -47,8 +46,9 @@ Bur, in the futur, I'd like to package it in way to make it available into Shink
 >> Are there some dependancies ?
 
 Classic PERL dependancies.
-# perl -MCPAN -e 'install Encoding::BER'
-# perl -MCPAN -e 'installConvert::BER'
+
+$ perl -MCPAN -e 'install Encoding::BER' &&
+$ perl -MCPAN -e 'installConvert::BER'
 
 If another module is needed,
 just install it the same way the two others upper (and changing for module name)
