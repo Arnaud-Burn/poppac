@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 ######## POPPAC - Personal OID Printer Paper Check ##############
-# Version : 0.6
+# Version : 0.61
 # Date :  March 26 2014
 # Author  : Arnaud Comein (arnaud.comein@gmail.com)
 # Licence : GPL - http://www.fsf.org/licenses/gpl.txt
@@ -31,8 +31,9 @@ my $INI;
 my $MONTH;
 my $HIST;
 my $TOT;
-my $err = "!!! Veuillez supprimer le fichier init.txt se trouvant dans /usr/share/poppac !!!\n";
+my $err = "Veuillez supprimer le fichier init.txt se trouvant dans /usr/share/poppac";
 my $help = "Utilisation : ./poppac.pl OID HOSTNAME\n";
+my $errfile = "Veuillez créer le dossier /usr/share/poppac";
 
 #Déclaration pour récupération de la date
 my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
@@ -71,7 +72,7 @@ if ($value)
 	{	
 		mkdir $dir;
 		
-		open $INI, ">", "/usr/share/poppac/init.txt";
+		open $INI, ">", "/usr/share/poppac/init.txt" or print $errfile and die;
 		open $MONTH, ">", "/usr/share/poppac/month.txt";
 		open $TOT, ">", "/usr/share/poppac/tot.txt";
 		open $HIST, ">", "/usr/share/poppac/hist.txt";
@@ -82,9 +83,9 @@ if ($value)
 	}
 	else #sinon, on les ouvre en lecture.
 	{	
-		open $MONTH, "<", "/usr/share/poppac/month.txt" or die $err;
-		open $TOT, "<", "/usr/share/poppac/tot.txt" or die $err;
-		open $HIST, "<", "/usr/share/poppac/hist.txt" or die $err;	
+		open $MONTH, "<", "/usr/share/poppac/month.txt" or print $err and die;
+		open $TOT, "<", "/usr/share/poppac/tot.txt" or print $err and die;
+		open $HIST, "<", "/usr/share/poppac/hist.txt" or print $err and die;	
 
 		$monthRaed = <$MONTH>;
 		$totAll = <$TOT>;
@@ -117,9 +118,9 @@ if ($value)
 	#Ecriture ssi le mois viens de changer. +> pour ajouter ecriture	
 	if ($i == 2)
 	{ 	
-		open $MONTH, "+>", "/usr/share/poppac/month.txt" or die $err;
-		open $TOT, "+>", "/usr/share/poppac/tot.txt" or die $err;
-		open $HIST, "+>", "/usr/share/poppac/hist.txt" or die $err;	
+		open $MONTH, "+>", "/usr/share/poppac/month.txt";
+		open $TOT, "+>", "/usr/share/poppac/tot.txt";
+		open $HIST, "+>", "/usr/share/poppac/hist.txt";	
 
 		print $MONTH $monthnum; 
 		print $TOT $totAll;
