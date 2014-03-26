@@ -1,0 +1,30 @@
+#TODO
+* Add automatic data restore in case of crash
+* Add new error messages
+* Add historical data storage
+* Add graphical integration or with PNP4nagios
+
+#Version 0.5 - Stable Version
+* Add data save into files
+* Add possibility to manually edit files
+* Add automatic month change detection
+* Add automatic data update on month change
+
+#Version 0.41
+* Add error message on deleted files
+
+#Version 0.4
+* Fix non-init data reception
+
+#Version 0.3
+* Data init and return at first launch
+* Add detection and automake for missing files
+* Add init detection
+
+#Version 0.2
+* Add the month for month check
+* Add error management
+* Fix multiple data send
+
+#Version 0.1
+* Simple OID information into the main output
