@@ -30,25 +30,3 @@ It will no impact on future updates.
 
 Just call 
 ./poppac.pl OID HOSTNAME
-
->> What about the install process ?
-
-At the moment, it's manual:
-1. Downlaod the script .pl
-2. place it inside your "libexec" folder
-3. gives your nagios/shinken user rights on it
-4. Create a new template and service definition for your monitoring system
-5. into the "commands.cfg", just call the script for each type of paper you want to check, just change the OID
-6. link some hosts to this template
-
-Bur, in the futur, I'd like to package it in way to make it available into Shinken.io for automatic install
-
->> Are there some dependancies ?
-
-Classic PERL dependancies.
-
-$ perl -MCPAN -e 'install Encoding::BER' &&
-$ perl -MCPAN -e 'installConvert::BER'
-
-If another module is needed,
-just install it the same way the two others upper (and changing for module name)
