@@ -1,24 +1,25 @@
 #!/usr/bin/perl -w
 
 ######## POPPAC - Personal OID Printer Paper Check ##############
-# Version : 0.7
+# Version : 0.71
 # Date :  March 27 2014
 # Author  : Arnaud Comein (arnaud.comein@gmail.com)
 # Licence : GPL - http://www.fsf.org/licenses/gpl.txt
 #################################################################
 
-#Needed for GET SNMP
+#Besoin pour les GET SNMP
 use BER;
 use SNMP_util;
 use SNMP_Session;
 
-#Neede for debugging - ~Verbose mode
+#Besoin pour le debug - ~mode verbeux sous linux
 use strict;
 use warnings;
 
-#Vars - "shift" = waitting for arguments - !order! - Undef by default
+#Variables - "shift" = attente d'argument - !ordre! - Undef par defaut
 my $MIB = shift;
 my $HOST = shift;
+my $FILE = shift;
 my $dir = "/usr/share/poppac";
 my $O;
 my $value;
@@ -32,21 +33,18 @@ my $MONTH;
 my $HIST;
 my $TOT;
 my $LAST;
-my $err = "Please, delete the init.txt file which is inside /usr/share/poppac";
-my $help = "Correct use : ./poppac-en.pl OID HOSTNAME\n";
-my $errfile = "Please, create this folder before /usr/share/poppac";
 
-#Get the hole date in separate vars
+#Déclaration pour récupération de la date
 my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
 
-#Correcting year (system year starts at 1900)
+#Ajustement de l'année (la date commence à 1900)
 my $year = $yearOffset + 1900;
 
-#Get current month - January = 0
-my $monthnum = $month + 1; #Needed for history
- 
+#Récupération du mois en cours - Janvier = 0 en systeme
+my $monthnum = $month + 1; #Besoin pour l'historique
+
 my %monthname = (
-1 => 'January',
+1 => 'January',	
 2 => 'February',
 3 => 'March',
 4 => 'April',
@@ -60,47 +58,53 @@ my %monthname = (
 12 => 'December',
 );
 
+#Centralisation des erreurs
+my $err = "Please, remove all *-init.txt files inside /usr/share/poppac";
+my $help = "Correct use : ./poppac.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...]\n";
+my $errfile = "Plaese, create directory /usr/share/poppac and give rights on it to your user";;
+my $errcon = "Unable to connect to $HOST\n";
+
 #Help
-($MIB) && ($HOST) || die $help;
+($MIB) && ($HOST) && ($FILE) || die $help;
 
 #GetOID
 ($value) = &snmpget("public\@$HOST","$MIB");
 
-#Exit in case of connection problem to host
+#Prevoir une sortie si la connexion à l'hote ne se fait pas
 if ($value)
 {
-	#Is it the first launch ?
-	open $INI, "<", "/usr/share/poppac/init.txt" or $i = 1;
+	#Est-ce la premiere éxécution ?
+	open $INI, "<", "/usr/share/poppac/$HOST-$FILE-init.txt" or $i = 1;
 
-	if ($i == 1) #If init doesn't exist, we create files and open them in Write mode
+	if ($i == 1) #Si le fichier init n'existe pas, on crée les fichiers et les ouvres en écriture.
 	{	
 		mkdir $dir;
 		
-		open $INI, ">", "/usr/share/poppac/init.txt" or print $errfile and die;
-		open $MONTH, ">", "/usr/share/poppac/month.txt";
-		open $TOT, ">", "/usr/share/poppac/tot.txt";
-		open $LAST, ">", "/usr/share/poppac/last.txt";		
-		open $HIST, ">", "/usr/share/poppac/hist.txt";
+		open $INI, ">", "/usr/share/poppac/$HOST-$FILE-init.txt" or print $errfile and die;
+		open $MONTH, ">", "/usr/share/poppac/$HOST-$FILE-month.txt";
+		open $TOT, ">", "/usr/share/poppac/$HOST-$FILE-tot.txt";
+		open $LAST, ">", "/usr/share/poppac/$HOST-$FILE-last.txt";		
+		open $HIST, ">", "/usr/share/poppac/$HOST-$FILE-hist.txt";
 
 		$totAll = 0;
 		$lastTot = $value;
 		$monthRaed = $monthnum;
 	}
-	else #Otherwise, they're open in Read mode
+	else #sinon, on les ouvre en lecture.
 	{	
-		open $MONTH, "<", "/usr/share/poppac/month.txt" or print $err and die;
-		open $TOT, "<", "/usr/share/poppac/tot.txt" or print $err and die;
-		open $LAST, "<", "/usr/share/poppac/last.txt" or print $err and die;	
+		open $MONTH, "<", "/usr/share/poppac/$HOST-$FILE-month.txt" or print $err and die;
+		open $TOT, "<", "/usr/share/poppac/$HOST-$FILE-tot.txt" or print $err and die;
+		open $LAST, "<", "/usr/share/poppac/$HOST-$FILE-last.txt" or print $err and die;	
 
 		$monthRaed = <$MONTH>;
 		$totAll = <$TOT>;
 		$lastTot = <$LAST>;
 	}
 
-	#Current month usage = SNMP Value - last month - total of history
+	#Calcul du total du mois en cours = Valeur SNMP - dernier mois - Totalhistorique
 	$tot = ($value - $lastTot - $totAll);
 
-	#Is the month had changed ?
+	#Verification si changement de mois
 	if ($monthRaed != $monthnum)
 	{
 		$totAll = $totAll + $lastTot;
@@ -109,43 +113,43 @@ if ($value)
 		$i = 2;
 	}
 
-	#Send data to Shinken UI
-	print "Printed page for $monthname{$monthnum} : $tot * Last month : $lastTot\n";
+	#Retour Shinken WebUI
+	print "Printed pages for $monthname{$monthnum} : $tot * Last month : $lastTot\n";
 
-	#Writting new data into files
+	#Ecriture des nouvelles données dans les fichiers
 	if ($i == 1) 
 	{ 
-		print $INI $i; #Write only if init.txt had just been created
+		print $INI $i; #Ecriture ssi init viens d'etre créé
 		print $MONTH $monthnum;
 		print $TOT $totAll;
 		print $LAST $lastTot;
 	}	
-	#Writting if month had changed. +> to add writting mode on a read mode file	
+	#Ecriture ssi le mois viens de changer. +> pour ajouter ecriture	
 	if ($i == 2)
 	{ 	
-		open $MONTH, "+>", "/usr/share/poppac/month.txt";
-		open $TOT, "+>", "/usr/share/poppac/tot.txt";
-		open $LAST, "+>", "/usr/share/poppac/last.txt";	
-		open $HIST, "+>>", "/usr/share/poppac/hist.txt";
+		open $MONTH, "+>", "/usr/share/poppac/$HOST-$FILE-month.txt";
+		open $TOT, "+>", "/usr/share/poppac/$HOST-$FILE-tot.txt";
+		open $LAST, "+>", "/usr/share/poppac/$HOST-$FILE-last.txt";	
+		open $HIST, "+>>", "/usr/share/poppac/$HOST-$FILE-hist.txt";
 
 		print $MONTH $monthnum; 
 		print $TOT $totAll;
 		print $LAST $lastTot;
 		
-		#Managing the "new year" bug
+		#Gestion du passage de Décembre à Janvier sinon normal
 		if ($month == 0)
 		{ print $HIST "$monthname{12} : $lastTot\n***** New Year : $year *****\n"; }
 		else { print $HIST "$monthname{$month} : $lastTot\n"; }
 	}
 
-	#Closing files
+	#Fermeture des fichiers
 	close $INI;
 	close $MONTH;
 	close $TOT;
 	close $LAST;
 	if ($i == 2) { close $HIST; }
 
-}
+} #Fin de la sortie en cas d'erreur de connexion
 
 else 
-{ print "Error connection to host $HOST\n"; }
+{ print $errcon; }
