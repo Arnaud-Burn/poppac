@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 ######## POPPAC - Personal OID Printer Paper Check ##############
-# Version : 0.7
+# Version : 0.71
 # Date :  March 27 2014
 # Author  : Arnaud Comein (arnaud.comein@gmail.com)
 # Licence : GPL - http://www.fsf.org/licenses/gpl.txt
@@ -19,6 +19,7 @@ use warnings;
 #Variables - "shift" = attente d'argument - !ordre! - Undef par defaut
 my $MIB = shift;
 my $HOST = shift;
+my $FILE = shift;
 my $dir = "/usr/share/poppac";
 my $O;
 my $value;
@@ -32,9 +33,6 @@ my $MONTH;
 my $HIST;
 my $TOT;
 my $LAST;
-my $err = "Veuillez supprimer le fichier init.txt se trouvant dans /usr/share/poppac";
-my $help = "Utilisation : ./poppac.pl OID HOSTNAME\n";
-my $errfile = "Veuillez créer le dossier /usr/share/poppac";
 
 #Déclaration pour récupération de la date
 my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
@@ -44,9 +42,9 @@ my $year = $yearOffset + 1900;
 
 #Récupération du mois en cours - Janvier = 0 en systeme
 my $monthnum = $month + 1; #Besoin pour l'historique
- 
+
 my %monthname = (
-1 => 'Janvier',
+1 => 'Janvier',	
 2 => 'Fevrier',
 3 => 'Mars',
 4 => 'Avril',
@@ -60,8 +58,14 @@ my %monthname = (
 12 => 'Decembre',
 );
 
+#Centralisation des erreurs
+my $err = "Veuillez supprimer les fichiers *-init.txt se trouvant dans /usr/share/poppac\n";
+my $help = "Utilisation : ./poppac.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...]\n";
+my $errfile = "Veuillez créer le dossier /usr/share/poppac\n";
+my $errcon = "Impossible d'établir la connexion avec $HOST\n";
+
 #Help
-($MIB) && ($HOST) || die $help;
+($MIB) && ($HOST) && ($FILE) || die $help;
 
 #GetOID
 ($value) = &snmpget("public\@$HOST","$MIB");
@@ -70,17 +74,17 @@ my %monthname = (
 if ($value)
 {
 	#Est-ce la premiere éxécution ?
-	open $INI, "<", "/usr/share/poppac/init.txt" or $i = 1;
+	open $INI, "<", "/usr/share/poppac/$HOST-$FILE-init.txt" or $i = 1;
 
 	if ($i == 1) #Si le fichier init n'existe pas, on crée les fichiers et les ouvres en écriture.
 	{	
 		mkdir $dir;
 		
-		open $INI, ">", "/usr/share/poppac/init.txt" or print $errfile and die;
-		open $MONTH, ">", "/usr/share/poppac/month.txt";
-		open $TOT, ">", "/usr/share/poppac/tot.txt";
-		open $LAST, ">", "/usr/share/poppac/last.txt";		
-		open $HIST, ">", "/usr/share/poppac/hist.txt";
+		open $INI, ">", "/usr/share/poppac/$HOST-$FILE-init.txt" or print $errfile and die;
+		open $MONTH, ">", "/usr/share/poppac/$HOST-$FILE-month.txt";
+		open $TOT, ">", "/usr/share/poppac/$HOST-$FILE-tot.txt";
+		open $LAST, ">", "/usr/share/poppac/$HOST-$FILE-last.txt";		
+		open $HIST, ">", "/usr/share/poppac/$HOST-$FILE-hist.txt";
 
 		$totAll = 0;
 		$lastTot = $value;
@@ -88,9 +92,9 @@ if ($value)
 	}
 	else #sinon, on les ouvre en lecture.
 	{	
-		open $MONTH, "<", "/usr/share/poppac/month.txt" or print $err and die;
-		open $TOT, "<", "/usr/share/poppac/tot.txt" or print $err and die;
-		open $LAST, "<", "/usr/share/poppac/last.txt" or print $err and die;	
+		open $MONTH, "<", "/usr/share/poppac/$HOST-$FILE-month.txt" or print $err and die;
+		open $TOT, "<", "/usr/share/poppac/$HOST-$FILE-tot.txt" or print $err and die;
+		open $LAST, "<", "/usr/share/poppac/$HOST-$FILE-last.txt" or print $err and die;	
 
 		$monthRaed = <$MONTH>;
 		$totAll = <$TOT>;
@@ -123,10 +127,10 @@ if ($value)
 	#Ecriture ssi le mois viens de changer. +> pour ajouter ecriture	
 	if ($i == 2)
 	{ 	
-		open $MONTH, "+>", "/usr/share/poppac/month.txt";
-		open $TOT, "+>", "/usr/share/poppac/tot.txt";
-		open $LAST, "+>", "/usr/share/poppac/last.txt";	
-		open $HIST, "+>>", "/usr/share/poppac/hist.txt";
+		open $MONTH, "+>", "/usr/share/poppac/$HOST-$FILE-month.txt";
+		open $TOT, "+>", "/usr/share/poppac/$HOST-$FILE-tot.txt";
+		open $LAST, "+>", "/usr/share/poppac/$HOST-$FILE-last.txt";	
+		open $HIST, "+>>", "/usr/share/poppac/$HOST-$FILE-hist.txt";
 
 		print $MONTH $monthnum; 
 		print $TOT $totAll;
@@ -148,4 +152,4 @@ if ($value)
 } #Fin de la sortie en cas d'erreur de connexion
 
 else 
-{ print "Connexion impossible à $HOST\n"; }
+{ print $errcon; }
