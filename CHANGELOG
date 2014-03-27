@@ -8,6 +8,10 @@
 * Script now exists in English - Poppac-en.pl
 * Fix new year bug when passing from December to January
 
+#Version 0.61
+* Fix error about not right to create directory
+* New error message send into Shinken
+
 #Version 0.6
 * Add own directory to store files
 * Fix data restore in case of machine crash
