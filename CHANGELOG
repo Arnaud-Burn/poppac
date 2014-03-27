@@ -1,7 +1,12 @@
 #TODO
-* Add historical data storage
 * Add graphical integration or with PNP4nagios
-* English message version
+* Do some prod tests more aimed
+* Add install script for dependancies and folders creation
+
+#Version 0.7
+* Add an History file of past month
+* Script now exists in English - Poppac-en.pl
+* Fix new year bug when passing from December to January
 
 #Version 0.6
 * Add own directory to store files

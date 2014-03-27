@@ -7,16 +7,16 @@
 # Licence : GPL - http://www.fsf.org/licenses/gpl.txt
 #################################################################
 
-#Besoin pour les GET SNMP
+#Needed for GET SNMP
 use BER;
 use SNMP_util;
 use SNMP_Session;
 
-#Besoin pour le debug - ~mode verbeux sous linux
+#Neede for debugging - ~Verbose mode
 use strict;
 use warnings;
 
-#Variables - "shift" = attente d'argument - !ordre! - Undef par defaut
+#Vars - "shift" = waitting for arguments - !order! - Undef by default
 my $MIB = shift;
 my $HOST = shift;
 my $dir = "/usr/share/poppac";
@@ -32,32 +32,32 @@ my $MONTH;
 my $HIST;
 my $TOT;
 my $LAST;
-my $err = "Veuillez supprimer le fichier init.txt se trouvant dans /usr/share/poppac";
-my $help = "Utilisation : ./poppac.pl OID HOSTNAME\n";
-my $errfile = "Veuillez créer le dossier /usr/share/poppac";
+my $err = "Please, delete the init.txt file which is inside /usr/share/poppac";
+my $help = "Correct use : ./poppac-en.pl OID HOSTNAME\n";
+my $errfile = "Please, create this folder before /usr/share/poppac";
 
-#Déclaration pour récupération de la date
+#Get the hole date in separate vars
 my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
 
-#Ajustement de l'année (la date commence à 1900)
+#Correcting year (system year starts at 1900)
 my $year = $yearOffset + 1900;
 
-#Récupération du mois en cours - Janvier = 0 en systeme
-my $monthnum = $month + 1; #Besoin pour l'historique
+#Get current month - January = 0
+my $monthnum = $month + 1; #Needed for history
  
 my %monthname = (
-1 => 'Janvier',
-2 => 'Fevrier',
-3 => 'Mars',
-4 => 'Avril',
-5 => 'Mai',
-6 => 'Juin',
-7 => 'Juillet',
-8 => 'Aout',
-9 => 'Septembre',
-10 => 'Octobre',
-11 => 'Novembre',
-12 => 'Decembre',
+1 => 'January',
+2 => 'February',
+3 => 'March',
+4 => 'April',
+5 => 'May',
+6 => 'June',
+7 => 'July',
+8 => 'August',
+9 => 'September',
+10 => 'October',
+11 => 'November',
+12 => 'December',
 );
 
 #Help
@@ -66,13 +66,13 @@ my %monthname = (
 #GetOID
 ($value) = &snmpget("public\@$HOST","$MIB");
 
-#Prevoir une sortie si la connexion à l'hote ne se fait pas
+#Exit in case of connection problem to host
 if ($value)
 {
-	#Est-ce la premiere éxécution ?
+	#Is it the first launch ?
 	open $INI, "<", "/usr/share/poppac/init.txt" or $i = 1;
 
-	if ($i == 1) #Si le fichier init n'existe pas, on crée les fichiers et les ouvres en écriture.
+	if ($i == 1) #If init doesn't exist, we create files and open them in Write mode
 	{	
 		mkdir $dir;
 		
@@ -86,7 +86,7 @@ if ($value)
 		$lastTot = $value;
 		$monthRaed = $monthnum;
 	}
-	else #sinon, on les ouvre en lecture.
+	else #Otherwise, they're open in Read mode
 	{	
 		open $MONTH, "<", "/usr/share/poppac/month.txt" or print $err and die;
 		open $TOT, "<", "/usr/share/poppac/tot.txt" or print $err and die;
@@ -97,10 +97,10 @@ if ($value)
 		$lastTot = <$LAST>;
 	}
 
-	#Calcul du total du mois en cours = Valeur SNMP - dernier mois - Totalhistorique
+	#Current month usage = SNMP Value - last month - total of history
 	$tot = ($value - $lastTot - $totAll);
 
-	#Verification si changement de mois
+	#Is the month had changed ?
 	if ($monthRaed != $monthnum)
 	{
 		$totAll = $totAll + $lastTot;
@@ -109,18 +109,18 @@ if ($value)
 		$i = 2;
 	}
 
-	#Retour Shinken WebUI
-	print "Impressions pour $monthname{$monthnum} : $tot * Mois dernier : $lastTot\n";
+	#Send data to Shinken UI
+	print "Printed page for $monthname{$monthnum} : $tot * Last month : $lastTot\n";
 
-	#Ecriture des nouvelles données dans les fichiers
+	#Writting new data into files
 	if ($i == 1) 
 	{ 
-		print $INI $i; #Ecriture ssi init viens d'etre créé
+		print $INI $i; #Write only if init.txt had just been created
 		print $MONTH $monthnum;
 		print $TOT $totAll;
 		print $LAST $lastTot;
 	}	
-	#Ecriture ssi le mois viens de changer. +> pour ajouter ecriture	
+	#Writting if month had changed. +> to add writting mode on a read mode file	
 	if ($i == 2)
 	{ 	
 		open $MONTH, "+>", "/usr/share/poppac/month.txt";
@@ -132,20 +132,20 @@ if ($value)
 		print $TOT $totAll;
 		print $LAST $lastTot;
 		
-		#Gestion du passage de Décembre à Janvier sinon normal
+		#Managing the "new year" bug
 		if ($month == 0)
-		{ print $HIST "$monthname{12} : $lastTot\n***** Nouvelle année : $year *****\n"; }
+		{ print $HIST "$monthname{12} : $lastTot\n***** New Year : $year *****\n"; }
 		else { print $HIST "$monthname{$month} : $lastTot\n"; }
 	}
 
-	#Fermeture des fichiers
+	#Closing files
 	close $INI;
 	close $MONTH;
 	close $TOT;
 	close $LAST;
 	if ($i == 2) { close $HIST; }
 
-} #Fin de la sortie en cas d'erreur de connexion
+}
 
 else 
-{ print "Connexion impossible à $HOST\n"; }
+{ print "Error connection to host $HOST\n"; }

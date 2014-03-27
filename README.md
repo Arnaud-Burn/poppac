@@ -29,4 +29,6 @@ It will no impact on future updates.
 >> How does it work ?
 
 Just call 
-./poppac.pl OID HOSTNAME
+./poppac.pl OID HOSTNAME (for French version)
+OR
+./poppac-en.pl OID HOSTNAME (for english version)
