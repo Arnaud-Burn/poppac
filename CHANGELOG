@@ -1,7 +1,7 @@
 #TODO
 * Add graphical integration or with PNP4nagios
-* Do some prod tests more aimed
 * Add install script for dependancies and folders creation
+* Packaging for auto-install and configure
 
 #Version 0.7
 * Add an History file of past month
