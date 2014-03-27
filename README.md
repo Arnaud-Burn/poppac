@@ -29,6 +29,8 @@ It will no impact on future updates.
 >> How does it work ?
 
 Just call 
-./poppac.pl OID HOSTNAME (for French version)
+./poppac.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...] (for French version)
+
 OR
-./poppac-en.pl OID HOSTNAME (for english version)
+
+./poppac-en.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...] (for English version)
