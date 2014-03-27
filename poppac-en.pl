@@ -12,7 +12,7 @@ use BER;
 use SNMP_util;
 use SNMP_Session;
 
-#Neede for debugging - ~Verbose mode
+#Needed for debugging - ~Verbose mode
 use strict;
 use warnings;
 
