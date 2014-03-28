@@ -35,6 +35,3 @@ Just call
 OR
 
 ./poppac-en.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...] (for English version)
-=======
-./poppac.pl OID HOSTNAME (for French version)   OR   ./poppac-en.pl OID HOSTNAME (for English version)
->>>>>>> b2019fcbfa259c7fb057df9514463a91c8363c17
