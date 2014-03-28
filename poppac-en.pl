@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 ######## POPPAC - Personal OID Printer Paper Check ##############
-# Version : 0.71
+# Version : 0.72
 # Date :  March 27 2014
 # Author  : Arnaud Comein (arnaud.comein@gmail.com)
 # Licence : GPL - http://www.fsf.org/licenses/gpl.txt
@@ -12,11 +12,7 @@ use BER;
 use SNMP_util;
 use SNMP_Session;
 
-<<<<<<< HEAD
 #Besoin pour le debug - ~mode verbeux sous linux
-=======
-#Needed for debugging - ~Verbose mode
->>>>>>> b2019fcbfa259c7fb057df9514463a91c8363c17
 use strict;
 use warnings;
 
@@ -37,6 +33,7 @@ my $MONTH;
 my $HIST;
 my $TOT;
 my $LAST;
+my %ERRORS=('OK'=>0,'WARNING'=>1,'CRITICAL'=>2,'UNKNOWN'=>3,'DEPENDENT'=>4);
 
 #Déclaration pour récupération de la date
 my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
@@ -48,25 +45,25 @@ my $year = $yearOffset + 1900;
 my $monthnum = $month + 1; #Besoin pour l'historique
 
 my %monthname = (
-1 => 'January',	
-2 => 'February',
-3 => 'March',
-4 => 'April',
-5 => 'May',
-6 => 'June',
-7 => 'July',
-8 => 'August',
-9 => 'September',
-10 => 'October',
-11 => 'November',
-12 => 'December',
+1 => 'Janvier',	
+2 => 'Fevrier',
+3 => 'Mars',
+4 => 'Avril',
+5 => 'Mai',
+6 => 'Juin',
+7 => 'Juillet',
+8 => 'Aout',
+9 => 'Septembre',
+10 => 'Octobre',
+11 => 'Novembre',
+12 => 'Decembre',
 );
 
 #Centralisation des erreurs
 my $err = "Please, remove all *-init.txt files inside /usr/share/poppac";
 my $help = "Correct use : ./poppac.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...]\n";
-my $errfile = "Plaese, create directory /usr/share/poppac and give rights on it to your user";;
-my $errcon = "Unable to connect to $HOST\n";
+my $errfile = "Plaese, create directory /usr/share/poppac and give rights on it to your user";
+my $errcon = "Unable to connect to $HOST, Check your OID number and your hostname\n";
 
 #Help
 ($MIB) && ($HOST) && ($FILE) || die $help;
@@ -156,4 +153,7 @@ if ($value)
 } #Fin de la sortie en cas d'erreur de connexion
 
 else 
-{ print $errcon; }
+{ 
+	print $errcon;
+	exit $ERRORS{"CRITICAL"};
+}
