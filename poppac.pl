@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 ######## POPPAC - Personal OID Printer Paper Check ##############
-# Version : 0.71
+# Version : 0.72
 # Date :  March 27 2014
 # Author  : Arnaud Comein (arnaud.comein@gmail.com)
 # Licence : GPL - http://www.fsf.org/licenses/gpl.txt
@@ -33,6 +33,7 @@ my $MONTH;
 my $HIST;
 my $TOT;
 my $LAST;
+my %ERRORS=('OK'=>0,'WARNING'=>1,'CRITICAL'=>2,'UNKNOWN'=>3,'DEPENDENT'=>4);
 
 #Déclaration pour récupération de la date
 my ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
@@ -62,7 +63,7 @@ my %monthname = (
 my $err = "Veuillez supprimer les fichiers *-init.txt se trouvant dans /usr/share/poppac\n";
 my $help = "Utilisation : ./poppac.pl OID HOSTNAME PAPERTYPE[A4B/A4C/A3B/A3C/...]\n";
 my $errfile = "Veuillez créer le dossier /usr/share/poppac\n";
-my $errcon = "Impossible d'établir la connexion avec $HOST\n";
+my $errcon = "Impossible d'établir la connexion avec $HOST, Verifiez le numéro OID et le nom d'hôte\n";
 
 #Help
 ($MIB) && ($HOST) && ($FILE) || die $help;
@@ -90,7 +91,7 @@ if ($value)
 		$lastTot = $value;
 		$monthRaed = $monthnum;
 	}
-	else #sinon, on les ouvres en lecture.
+	else #sinon, on les ouvre en lecture.
 	{	
 		open $MONTH, "<", "/usr/share/poppac/$HOST-$FILE-month.txt" or print $err and die;
 		open $TOT, "<", "/usr/share/poppac/$HOST-$FILE-tot.txt" or print $err and die;
@@ -152,4 +153,7 @@ if ($value)
 } #Fin de la sortie en cas d'erreur de connexion
 
 else 
-{ print $errcon; }
+{ 
+	print $errcon;
+	exit $ERRORS{"CRITICAL"};
+}
