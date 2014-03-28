@@ -1,7 +1,10 @@
 #TODO
 * Add graphical integration or with PNP4nagios
-* Do some prod tests more aimed
 * Add install script for dependancies and folders creation
+* Packaging for auto-install and configure
+
+#Version 0.72
+* Add error code into shinken UI [CRITICAL : WARNING]
 
 #Version 0.71
 * Add papertype selection

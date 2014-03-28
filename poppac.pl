@@ -90,7 +90,7 @@ if ($value)
 		$lastTot = $value;
 		$monthRaed = $monthnum;
 	}
-	else #sinon, on les ouvre en lecture.
+	else #sinon, on les ouvres en lecture.
 	{	
 		open $MONTH, "<", "/usr/share/poppac/$HOST-$FILE-month.txt" or print $err and die;
 		open $TOT, "<", "/usr/share/poppac/$HOST-$FILE-tot.txt" or print $err and die;

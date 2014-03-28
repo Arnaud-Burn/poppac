@@ -12,7 +12,11 @@ use BER;
 use SNMP_util;
 use SNMP_Session;
 
+<<<<<<< HEAD
 #Besoin pour le debug - ~mode verbeux sous linux
+=======
+#Needed for debugging - ~Verbose mode
+>>>>>>> b2019fcbfa259c7fb057df9514463a91c8363c17
 use strict;
 use warnings;
 
