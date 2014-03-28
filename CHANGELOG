@@ -4,7 +4,7 @@
 * Packaging for auto-install and configure
 
 #Version 0.72
-* Add error code into shinken UI [CRITICAL : WARNING]
+* Add error code into shinken UI [CRITICAL | WARNING]
 
 #Version 0.71
 * Add papertype selection
