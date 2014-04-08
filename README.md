@@ -21,6 +21,7 @@ It will no impact on future updates.
 * Shows the Total printed pages for the actual month plus the name of the month.
 * Shows the total printed pages for the last month.
 * Manage the month change automatically, based on system time.
+* Keeps historic files for each paper types/devices in /usr/share/poppac
 * Detect and create files automatically at first launch.
 * Detect and warn the user for connection problem to host.
 * Detect and warn the user for corrupted or missing files.
